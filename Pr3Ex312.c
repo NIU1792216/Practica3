@@ -3,6 +3,8 @@ Marco Rondón, 1794984
 Mario Roda Sevilla, 1792216
 */
 #include <stdio.h>
+#include <stdlib.h>
+
 #define MAXAR 7
 #define MAXARNO 5
 
@@ -18,15 +20,24 @@ typedef struct
 
 unsigned arestesdelnode(unsigned , unsigned ,  aresta[] , unsigned []);
 int arestaaLallista(unsigned aresta, unsigned llistap[], unsigned npos);
+int ValenciaNodes(aresta lArestes[], unsigned numArestes, unsigned numNodes, unsigned *lValenciaNodes, unsigned *posNodeMax);
+
 
 int main(){
+    unsigned *llistaValenciaNodes, *posNodeMax;
     unsigned i,arestespos[MAXARNO],npos=0,seguir=0, opcio, valida;
     estructuracami cami;
     //Tenim 7 arestes [0-6] y el node més gran es el 3 (tenim 4 nodes [0-3]).
     unsigned MAXNODE = 3;
     aresta larestes[]={{0,1,0},{0,2,0},{0,2,0},{0,3,0},{0,3,0},
     {1,2,0},{1,3,0}};
+    ValenciaNodes(larestes, 7, 4, llistaValenciaNodes, posNodeMax);
+    printf("El node amb maxima valencia es el node %d\n",*posNodeMax);
+    for (i=0;i<4;i++){
+        printf("El node %d te valencia %d\n",i,llistaValenciaNodes[i]);
+    }
     cami.naresvisit=0;
+
     for(i=0;i<MAXAR;i++){
         printf("Aresta %d -> [%d,%d]\n",i,larestes[i].n1,larestes[i].n2);
     }
@@ -103,6 +114,25 @@ int arestaaLallista(unsigned ar, unsigned llistap[], unsigned npos){
     for (i=0; i<npos; i++){
         if (llistap[i] == ar){
             return 1;
+        }
+    }
+    return 0;
+}
+
+int ValenciaNodes(aresta lArestes[], unsigned numArestes, unsigned numNodes, unsigned *lValenciaNodes, unsigned *posNodeMax){
+    unsigned i;
+    if ((lValenciaNodes = (unsigned *)malloc(sizeof(int)*numNodes))==NULL){printf("No hi ha espai a la memoria suficient");return -1;};
+    for (i=0;i<numNodes;i++){
+        lValenciaNodes[i]=0;
+    }
+    for (i=0;i<numArestes;i++){
+        lValenciaNodes[lArestes[i].n1] += 1;
+        lValenciaNodes[lArestes[i].n2] += 1;
+    }
+    *posNodeMax = 0;
+    for (i=0;i<numNodes;i++){
+        if (*posNodeMax > lValenciaNodes[i]){
+            *posNodeMax = i;
         }
     }
     return 0;
