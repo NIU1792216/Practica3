@@ -20,7 +20,7 @@ typedef struct
 
 unsigned arestesdelnode(unsigned , unsigned ,  aresta[] , unsigned []);
 int arestaaLallista(unsigned aresta, unsigned llistap[], unsigned npos);
-int ValenciaNodes(aresta lArestes[], unsigned numArestes, unsigned numNodes, unsigned *lValenciaNodes, unsigned *posNodeMax);
+void ValenciaNodes(aresta lArestes[], unsigned numArestes, unsigned numNodes, unsigned *lValenciaNodes, unsigned *posNodeMax);
 
 
 int main(){
@@ -31,6 +31,9 @@ int main(){
     unsigned MAXNODE = 3;
     aresta larestes[]={{0,1,0},{0,2,0},{0,2,0},{0,3,0},{0,3,0},
     {1,2,0},{1,3,0}};
+    // Reservem memoria
+    if ((posNodeMax = (unsigned *)malloc(sizeof(unsigned)))==NULL){{printf("No hi ha espai a la memoria suficient");return -1;}}
+    if ((llistaValenciaNodes = (unsigned *)malloc(sizeof(unsigned)*4))==NULL){printf("No hi ha espai a la memoria suficient");return -1;};
     ValenciaNodes(larestes, 7, 4, llistaValenciaNodes, posNodeMax);
     printf("El node amb maxima valencia es el node %d\n",*posNodeMax);
     for (i=0;i<4;i++){
@@ -92,6 +95,10 @@ int main(){
         }
     }while(seguir);
     printf("\n");
+
+    // Alliberem memoria
+    free(llistaValenciaNodes);
+    free(posNodeMax);
     return 0;
 }
 
@@ -119,21 +126,22 @@ int arestaaLallista(unsigned ar, unsigned llistap[], unsigned npos){
     return 0;
 }
 
-int ValenciaNodes(aresta lArestes[], unsigned numArestes, unsigned numNodes, unsigned *lValenciaNodes, unsigned *posNodeMax){
+void ValenciaNodes(aresta lArestes[], unsigned numArestes, unsigned numNodes, unsigned *lValenciaNodes, unsigned *posNodeMax){
     unsigned i;
-    if ((lValenciaNodes = (unsigned *)malloc(sizeof(int)*numNodes))==NULL){printf("No hi ha espai a la memoria suficient");return -1;};
+    // Posem a zero el contador de la valencia de cada node
     for (i=0;i<numNodes;i++){
         lValenciaNodes[i]=0;
     }
+    // Contem el numero de vegades que apareix cada node (la seva valencia)
     for (i=0;i<numArestes;i++){
         lValenciaNodes[lArestes[i].n1] += 1;
         lValenciaNodes[lArestes[i].n2] += 1;
     }
+    // Mirem quin es el node amb mes valencia de tots.
     *posNodeMax = 0;
     for (i=0;i<numNodes;i++){
         if (*posNodeMax > lValenciaNodes[i]){
             *posNodeMax = i;
         }
     }
-    return 0;
 }
